@@ -3,15 +3,15 @@ export default (function () {
     const CLOSING = 2;
     const CLOSED = 3;
 
-    let monitor
     let webSocket
     let printer
+    let logger
     let isClearFunction
     let isAutomaticFunction;
 
-    function initialize(elementId, printerCallback, processlistClear, interactionAutomatic) {
-        monitor = document.getElementById(elementId)
+    function initialize(elementId, printerCallback, logCallback, processlistClear, interactionAutomatic) {
         printer = printerCallback
+        logger = logCallback
         isClearFunction = processlistClear
         isAutomaticFunction = interactionAutomatic
 
@@ -36,7 +36,6 @@ export default (function () {
     }
 
     function handleIncomingMessage(message) {
-        console.log("received", message)
         switch (message.MessageType) {
             case "print":
                 const time = printer(message.Message, false)
@@ -49,6 +48,9 @@ export default (function () {
                 break
             case "choose":
                 choose(message.Message[0], message.Message[1])
+                break
+            case "log":
+                logger(message.Message)
                 break
             case "error":
                 const msg = "<div class='error'>ERROR</div>" + message.Message

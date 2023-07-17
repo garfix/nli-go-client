@@ -2,7 +2,7 @@
     <q-page class="flex row page-wrapper">
 
         <div class="col col-md-auto column monitor">
-            monitor was here
+            <logger ref="logger"></logger>
         </div>
         <div class="col col-md-auto column chat">
             <chat ref="chat" @input="handleInput" :isAutomatic="isAutomatic()"></chat>
@@ -37,6 +37,7 @@
 
 import { ref, onMounted, computed, nextTick } from 'vue';
 import Chat from '../components/Chat.vue'
+import Logger from '../components/Logger.vue'
 import controller from '../lib/controller'
 import speech from '../lib/speech'
 import AnimatedSoundWave from '../components/AnimatedSoundWave.vue'
@@ -49,6 +50,7 @@ const STATE_PAUSED = "paused"
 const CONFIDENCE_HIGH = 0.92
 
 const chat = ref()
+const logger = ref()
 const demoState = ref(STATE_INACTIVE)
 const progress = computed(() => interactionIndex.value / conversation.length)
 const progressLabel = computed(() => interactionIndex.value + " / " + conversation.length)
@@ -66,7 +68,7 @@ onMounted(() => {
 })
 
 function startController() {
-    controller.initialize('monitor', print, processlistClear, isAutomatic)
+    controller.initialize('monitor', print, log, processlistClear, isAutomatic)
 }
 
 function startDemo() {
@@ -100,6 +102,10 @@ function print(message, isHtml) {
     voiceInteraction.value = false
 
     return chat.value.print(message, isHtml)
+}
+
+function log(message) {
+    logger.value.addLogMessage(message)
 }
 
 function handleInput(input) {
@@ -181,7 +187,7 @@ function handleSpeechInput(input, confidence) {
     right: 50%;
     top: 0;
     bottom: 0;
-    background-color: #c2c0bf;
+    background-color: #f0f0f0;
 }
 
 .chat {
